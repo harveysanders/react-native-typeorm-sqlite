@@ -5,7 +5,8 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import { useDatabase } from '../database/hooks';
 import { Todo } from './entities/todo';
-import { saveTodo } from './models/todo';
+import { saveTodo, useTodos } from './models/todo';
+import { TodoList } from './components/TodoList';
 
 interface IToDo {
   text: string;
@@ -13,16 +14,14 @@ interface IToDo {
 }
 
 export default function App() {
+  useDatabase();
   const [value, setValue] = useState<string>('');
-  const [toDoList, setToDos] = useState<IToDo[]>([]);
+  const { todos: toDoList } = useTodos();
   const [error, showError] = useState<Boolean>(false);
-
-  const { error: connectionError, loading, connection } = useDatabase();
 
   const handleSubmit = async (): Promise<void> => {
     if (value.trim()) {
       const todo: Omit<Todo, 'id'> = { desc: value, isComplete: false };
-      setToDos([...toDoList, { text: value, completed: false }]);
       await saveTodo(todo);
       setValue('');
     } else {
@@ -30,17 +29,9 @@ export default function App() {
     }
   };
 
-  const removeItem = (index: number): void => {
-    const newToDoList = [...toDoList];
-    newToDoList.splice(index, 1);
-    setToDos(newToDoList);
-  };
+  const removeItem = (index: number): void => {};
 
-  const toggleComplete = (index: number): void => {
-    const newToDoList = [...toDoList];
-    newToDoList[index].completed = !newToDoList[index].completed;
-    setToDos(newToDoList);
-  };
+  const toggleComplete = (index: number): void => {};
 
   return (
     <View style={styles.container}>
@@ -61,30 +52,8 @@ export default function App() {
         <Text style={styles.error}>Error: Input field is empty...</Text>
       )}
       <Text style={styles.subtitle}>Your Tasks :</Text>
-      {toDoList.length === 0 && <Text>No to do task available</Text>}
-      {toDoList.map((toDo: IToDo, index: number) => (
-        <View style={styles.listItem} key={`${index}_${toDo.text}`}>
-          <Text
-            style={[
-              styles.task,
-              { textDecorationLine: toDo.completed ? 'line-through' : 'none' },
-            ]}
-          >
-            {toDo.text}
-          </Text>
-          <Button
-            title={toDo.completed ? 'Completed' : 'Complete'}
-            onPress={() => toggleComplete(index)}
-          />
-          <Button
-            title="X"
-            onPress={() => {
-              removeItem(index);
-            }}
-            color="crimson"
-          />
-        </View>
-      ))}
+
+      {toDoList ? <TodoList todos={toDoList} /> : null}
     </View>
   );
 }
@@ -118,18 +87,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: 'purple',
   },
-  listItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    marginBottom: 10,
-  },
   addButton: {
     alignItems: 'flex-end',
-  },
-  task: {
-    width: 200,
   },
   error: {
     color: 'red',
