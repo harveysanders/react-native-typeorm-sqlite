@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import { useDatabase } from '../database/hooks';
 import { Todo } from './entities/todo';
-import { saveTodo, useTodos } from './models/todo';
+import { removeTodo, saveTodo, useTodos } from './models/todo';
 import { TodoList } from './components/TodoList';
 
 interface IToDo {
@@ -15,23 +15,32 @@ interface IToDo {
 
 export default function App() {
   useDatabase();
+  // Hack to trigger useEffect
+  const [forceUpdate, refresh] = useState<number>(0);
   const [value, setValue] = useState<string>('');
-  const { todos: toDoList } = useTodos();
+
+  const { todos: toDoList } = useTodos(forceUpdate.toString());
   const [error, showError] = useState<Boolean>(false);
 
   const handleSubmit = async (): Promise<void> => {
     if (value.trim()) {
       const todo: Omit<Todo, 'id'> = { desc: value, isComplete: false };
       await saveTodo(todo);
+      refresh(Math.random());
       setValue('');
     } else {
       showError(true);
     }
   };
 
-  const removeItem = (index: number): void => {};
+  const handleDelete = async (id: string) => {
+    await removeTodo(id);
+    refresh(Math.random());
+  };
 
-  const toggleComplete = (index: number): void => {};
+  const handleToggleCompleted = async (_id: string) => {
+    refresh(Math.random());
+  };
 
   return (
     <View style={styles.container}>
@@ -53,7 +62,13 @@ export default function App() {
       )}
       <Text style={styles.subtitle}>Your Tasks :</Text>
 
-      {toDoList ? <TodoList todos={toDoList} /> : null}
+      {toDoList ? (
+        <TodoList
+          todos={toDoList}
+          onDelete={handleDelete}
+          onToggleCompleted={handleToggleCompleted}
+        />
+      ) : null}
     </View>
   );
 }

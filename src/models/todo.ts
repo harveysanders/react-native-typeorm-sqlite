@@ -14,7 +14,13 @@ export const getTodos = async () => {
   return todos;
 };
 
-export const useTodos = () => {
+export const removeTodo = async (id: string) => {
+  const repository = getRepository(Todo);
+  const todo = await repository.delete(id);
+  return todo;
+};
+
+export const useTodos = (query?: string) => {
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [todos, setTodos] = useState<Todo[] | null>(null);
@@ -29,6 +35,6 @@ export const useTodos = () => {
       }
     }
     run();
-  }, []);
+  }, [query]);
   return { error, loading, todos };
 };

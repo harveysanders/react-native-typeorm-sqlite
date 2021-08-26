@@ -4,30 +4,33 @@ import { Todo } from '../entities/todo';
 
 interface TodoListProps {
   todos: Todo[];
+  onDelete: (id: string) => void;
+  onToggleCompleted: (id: string) => void;
 }
 export const TodoList: React.FC<TodoListProps> = (props) => {
-  const { todos } = props;
+  const { todos, onDelete, onToggleCompleted } = props;
+
   return (
     <View>
       {todos.length === 0 && <Text>No to do task available</Text>}
-      {todos.map((toDo, index) => (
-        <View style={styles.listItem} key={`${index}_${toDo.desc}`}>
+      {todos.map((todo, index) => (
+        <View style={styles.listItem} key={`${index}_${todo.desc}`}>
           <Text
             style={[
               styles.task,
-              { textDecorationLine: toDo.completed ? 'line-through' : 'none' },
+              { textDecorationLine: todo.isComplete ? 'line-through' : 'none' },
             ]}
           >
-            {toDo.desc}
+            {todo.desc}
           </Text>
           <Button
-            title={toDo.isComplete ? 'Completed' : 'Complete'}
-            onPress={() => toggleComplete(index)}
+            title={todo.isComplete ? 'Completed' : 'Complete'}
+            onPress={() => onToggleCompleted(todo.id)}
           />
           <Button
             title="X"
             onPress={() => {
-              removeItem(index);
+              onDelete(todo.id);
             }}
             color="crimson"
           />
