@@ -4,6 +4,8 @@ import 'reflect-metadata';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import { useDatabase } from '../database/hooks';
+import { Todo } from './entities/todo';
+import { saveTodo } from './models/todo';
 
 interface IToDo {
   text: string;
@@ -17,11 +19,15 @@ export default function App() {
 
   const { error: connectionError, loading, connection } = useDatabase();
 
-  const handleSubmit = (): void => {
-    if (value.trim())
+  const handleSubmit = async (): Promise<void> => {
+    if (value.trim()) {
+      const todo: Omit<Todo, 'id'> = { desc: value, isComplete: false };
       setToDos([...toDoList, { text: value, completed: false }]);
-    else showError(true);
-    setValue('');
+      await saveTodo(todo);
+      setValue('');
+    } else {
+      showError(true);
+    }
   };
 
   const removeItem = (index: number): void => {

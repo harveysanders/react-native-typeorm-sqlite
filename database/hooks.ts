@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createConnection } from 'typeorm/browser';
+import { Todo } from '../src/entities/todo';
 
 export const useDatabase = () => {
   const [error, setError] = useState<Error | null>(null);
@@ -16,11 +17,7 @@ export const useDatabase = () => {
           location: 'default',
           logging: ['error', 'query', 'schema'],
           synchronize: true,
-          entities: [
-            // Author,
-            // Category,
-            // Post
-          ],
+          entities: [Todo],
         });
         setLoading(false);
         console.log(con);
