@@ -12,6 +12,7 @@
   "dependencies": {
     "@babel/plugin-proposal-decorators": "^7.14.5",
     "@types/react-native-sqlite-storage": "^5.0.1",
+    "faker": "^5.5.3",
     "react": "17.0.2",
     "react-native": "0.65.1",
     "react-native-sqlite-storage": "^5.0.0",
@@ -22,6 +23,7 @@
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^2.0.0",
+    "@types/faker": "^5.5.8",
     "@types/jest": "^26.0.23",
     "@types/node": "^16.7.1",
     "@types/react-native": "^0.64.5",

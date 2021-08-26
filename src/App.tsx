@@ -7,6 +7,7 @@ import { useDatabase } from '../database/hooks';
 import { Todo } from './entities/todo';
 import { removeTodo, saveTodo, useTodos } from './models/todo';
 import { TodoList } from './components/TodoList';
+import { CreateButton } from './components/CreateItem';
 
 interface IToDo {
   text: string;
@@ -69,6 +70,9 @@ export default function App() {
           onToggleCompleted={handleToggleCompleted}
         />
       ) : null}
+
+      <CreateButton type={'Location'} />
+      <CreateButton type={'Contact'} />
     </View>
   );
 }
