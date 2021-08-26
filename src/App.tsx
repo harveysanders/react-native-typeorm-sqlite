@@ -1,7 +1,9 @@
 // https://github.com/amanshharma/React-Native-ToDoApp-using-Typscript-and-Hooks/blob/master/App.tsx
 
+import 'reflect-metadata';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { useDatabase } from '../database/hooks';
 
 interface IToDo {
   text: string;
@@ -12,6 +14,8 @@ export default function App() {
   const [value, setValue] = useState<string>('');
   const [toDoList, setToDos] = useState<IToDo[]>([]);
   const [error, showError] = useState<Boolean>(false);
+
+  const { error: connectionError, loading, connection } = useDatabase();
 
   const handleSubmit = (): void => {
     if (value.trim())
